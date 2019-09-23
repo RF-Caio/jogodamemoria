@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
+		<title>Memoria - Login</title>
+	</head>
+	<body>
+		<div class="container">
+			<form id="loginrequest" class="col-lg-4">
+				<div class="form-group">
+					<label for="user">Usuário</label>
+					<input id="user" type="text" class="form-control" autofocus>
+				</div>
+				<div class="form-group">
+					<label for="password">Senha</label>
+					<input id="password" type="password" class="form-control">
+				</div>
+				<center>
+					<button id="entrar" type="button" class="btn btn-warning col-lg-5">Entrar</button>
+					<button id="novousuario" type="button" class="btn btn-warning col-lg-5" data-toggle="modal" data-target="#newAcc">Criar Conta</button>
+				</center>
+			</form>
+		</div>
+		
+		<!-- Modal -->
+			<div class="modal" id="newAcc" aria-labelledby="newAccTitle" aria-hidden="true">
+				<div class="modal-dialog modal-sm" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="newAccTitle">Criar Nova Conta</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="newacc" class="col-lg-12">
+								<div class="form-group">
+									<label for="newuser">Usuário</label>
+									<input id="newuser" type="text" class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="newmail">E-Mail</label>
+									<input id="newmail" type="email" class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="newpass">Senha</label>
+									<input id="newpass" type="pasword" class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="newpass2">Confirmar Senha</label>
+									<input id="newpass2" type="pasword" class="form-control">
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+							<button type="button" class="btn btn-primary">Criar Conta</button>
+						</div>
+					</div>	
+				</div>
+			</div>
+		
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script>
+			$(function() {
+				
+			});
+			$("#entrar").on("click", function() {
+				if ($("#user").val() == "") {
+					$("#user").css("border-color: red");
+					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Usuário não pode estar em branco</div>");
+				}
+				else if ($("#password").val() == "") {
+					$("#password").css("border-color: red");
+					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Senha não pode estar em branco</div>");
+				}
+				else {
+					let user = $("#user").val();
+					let pass = $("#password").val();
+					if (Validar(user) && Validar(pass))
+						console.log("credenciais OK");
+						//Submit do formulario
+					else {
+						$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Nenhum dos campos pode contar caracteres especiais</div>");
+						$("#user").val("");
+						$("#password").val("");
+					}					
+				}
+			});
+			function Validar(cred){
+				for (let i = 0; i < cred.length; i++){
+					if (!(((cred.charCodeAt(i) >= 48) && (cred.charCodeAt(i) <= 57)) 		//Numeros
+						|| ((cred.charCodeAt(i) >= 65) && (cred.charCodeAt(i) <= 90)) 		//Maiusculas
+						|| ((cred.charCodeAt(i) >= 97) && (cred.charCodeAt(i) <= 122)))) 	//Minusculas
+						return false;
+				}
+				return true;
+			}
+		</script>
+	</body>
+</html>
