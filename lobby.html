@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<link rel="stylesheet" href="memoria.css">
+		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
+		<title>Memoria - Lobby</title>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-9">
+					<center><h1>JOGO DA MEMORIA</h1></center>
+				</div>
+				<div class="col-lg-3">
+					<div class="row">
+						<div class="col-lg-8">
+							<span id="userid">UserID</span>
+							<button id="logout" type="button" class="btn btn-danger">Logout</button>
+						</div>
+						<div class="col-lg-4">
+							<img id="userpic" class="img-fluid rounded-circle" src="nopicture.png">
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-lg-8">
+					<h3>SALAS</h3>
+					<table id="salas" class="table table-striped">
+						<thead class="thead-light">
+							<tr>
+								<th>#</th>
+								<th>Nome da sala</th>
+								<th>Criador</th>
+								<th>Tipo</th>
+								<th>Dificuldade</th>
+								<th>Status</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-lg-4">
+					<h3>RANKING</h3>
+					<table id="ranking" class="table table-striped">
+						<thead class="thead-light">
+							<tr>
+								<th>#</th>
+								<th>Jogador</th>
+								<th>Pontuação</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
+				<input id="busca" type="text" placeholder="Procure pelo nome da sala">
+				<button id="queue" class="btn btn-warning" type="button">Partida Rápida</button>
+				<button id="criar" class="btn btn-warning" type="button" data-toggle="modal" data-target="#criarSala">Criar Sala</button>
+			</div>
+		</div>
+		
+		<!-- Modal -->
+		<div class="modal" id="criarSala" aria-labelledby="criarSalaTitle" aria-hidden="true">
+			<div class="modal-dialog modal-md" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="criarSalaTitle">Criação de Sala</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="" class="col-lg-12">
+							<div class="form-group">
+								<b><label for="newroom">Nome da Sala</label></b>
+								<input id="newroom" type="text" class="form-control">
+							</div>
+							<div class="form-group">
+								<b><label>Tipo de partida</label></b><br/>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="tipoPartida" id="casualRadio" value="0">
+									<label class="form-check-label" for="casualRadio">Casual</label>
+									<input class="form-check-input" type="radio" name="tipoPartida" id="rankRadio" value="1">
+									<label class="form-check-label" for="rankRadio">Ranqueada</label>
+								</div>
+							</div>
+							<div class="form-group">
+								</b><label>Dificuldade</label></b><br />
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="difPartida" id="facRadio" value="0">
+									<label class="form-check-label" for="facRadio">Fácil</label>
+									<input class="form-check-input" type="radio" name="difPartida" id="norRadio" value="1">
+									<label class="form-check-label" for="intRadio">Normal</label>
+									<input class="form-check-input" type="radio" name="difPartida" id="difRadio" value="2">
+									<label class="form-check-label" for="difRadio">Difícil</label>
+									<input class="form-check-input" type="radio" name="difPartida" id="fatRadio" value="3">
+									<label class="form-check-label" for="fatRadio">FATEC</label>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+						<button type="button" id="createroom" class="btn btn-primary">Criar Sala</button>
+					</div>
+				</div>	
+			</div>
+		</div>
+	
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script>
+			$(function() {
+				$("#salas").DataTable({
+					"pagingType" : "numbers";
+					"order" : [[0, "asc"]];
+				});
+				$("#ranking").DataTable({
+					"pagingType" : "numbers";
+					"order" : [[0, "asc"]];
+				});
+			});
+		
+		</body>
+</html>

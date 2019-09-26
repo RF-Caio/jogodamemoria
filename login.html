@@ -4,6 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<link rel="stylesheet" href="memoria.css">
 		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
 		<title>Memoria - Login</title>
 	</head>
@@ -26,42 +27,42 @@
 		</div>
 		
 		<!-- Modal -->
-			<div class="modal" id="newAcc" aria-labelledby="newAccTitle" aria-hidden="true">
-				<div class="modal-dialog modal-sm" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="newAccTitle">Criar Nova Conta</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<form id="newacc" class="col-lg-12">
-								<div class="form-group">
-									<label for="newuser">Usuário</label>
-									<input id="newuser" type="text" class="form-control">
-								</div>
-								<div class="form-group">
-									<label for="newmail">E-Mail</label>
-									<input id="newmail" type="email" class="form-control">
-								</div>
-								<div class="form-group">
-									<label for="newpass">Senha</label>
-									<input id="newpass" type="pasword" class="form-control">
-								</div>
-								<div class="form-group">
-									<label for="newpass2">Confirmar Senha</label>
-									<input id="newpass2" type="pasword" class="form-control">
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-							<button type="button" class="btn btn-primary">Criar Conta</button>
-						</div>
-					</div>	
-				</div>
+		<div class="modal" id="newAcc" aria-labelledby="newAccTitle" aria-hidden="true">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="newAccTitle">Criar Nova Conta</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="newacc" class="col-lg-12">
+							<div class="form-group">
+								<label for="newuser">Usuário</label>
+								<input id="newuser" type="text" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="newmail">E-Mail</label>
+								<input id="newmail" type="email" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="newpass">Senha</label>
+								<input id="newpass" type="password" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="newpass2">Confirmar Senha</label>
+								<input id="newpass2" type="password" class="form-control">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+						<button type="button" id="createacc" class="btn btn-primary">Criar Conta</button>
+					</div>
+				</div>	
 			</div>
+		</div>
 		
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -70,13 +71,18 @@
 			$(function() {
 				
 			});
+						
 			$("#entrar").on("click", function() {
+				if ($("#user").hasClass("border-danger"))
+					$("#user").removeClass("border-danger");
+				if ($("#password").hasClass("border-danger"))
+					$("#password").removeClass("border-danger");
 				if ($("#user").val() == "") {
-					$("#user").css("border-color: red");
+					$("#user").addClass("border-danger");
 					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Usuário não pode estar em branco</div>");
 				}
 				else if ($("#password").val() == "") {
-					$("#password").css("border-color: red");
+					$("#password").addClass("border-danger");
 					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Senha não pode estar em branco</div>");
 				}
 				else {
@@ -92,12 +98,53 @@
 					}					
 				}
 			});
+			
+			$("#createacc").on("click", function() {
+				if ($("#newuser").val() == "") {
+				
+				}
+				else if ($("#newmail").val() == "") {
+				
+				} 
+				else if ($("#newpass").val() == "") {
+				
+				} 
+				else if ($("#newpass").val() == "") {
+				
+				}
+				else {
+					let user = $("#newuser").val();
+					let mail = $("#newmail").val();
+					let pass = $("#newpass").val();
+						let pass2 = $("#newpass2").val();
+					if (Validar(user) && Validar(pass)){
+						if (pass == pass2){
+							//enviar email de confirmação?
+							console.log("OK");
+						}
+						else {
+							//ERRO: as senhas devem ser iguais
+							console.log("ERRO: as senhas devem ser iguais");
+						}
+					}
+					else {
+						//ERRO: nao podem haver caracteres especiais
+						console.log("ERRO: nao podem haver caracteres especiais");
+					}
+				}
+			});
+			
 			function Validar(cred){
-				for (let i = 0; i < cred.length; i++){
-					if (!(((cred.charCodeAt(i) >= 48) && (cred.charCodeAt(i) <= 57)) 		//Numeros
-						|| ((cred.charCodeAt(i) >= 65) && (cred.charCodeAt(i) <= 90)) 		//Maiusculas
-						|| ((cred.charCodeAt(i) >= 97) && (cred.charCodeAt(i) <= 122)))) 	//Minusculas
-						return false;
+				if (cred.lenght < 8) {
+					return false;
+				}
+				else {
+					for (let i = 0; i < cred.length; i++){
+						if (!(((cred.charCodeAt(i) >= 48) && (cred.charCodeAt(i) <= 57)) 		//Numeros
+							|| ((cred.charCodeAt(i) >= 65) && (cred.charCodeAt(i) <= 90)) 		//Maiusculas
+							|| ((cred.charCodeAt(i) >= 97) && (cred.charCodeAt(i) <= 122)))) 	//Minusculas
+							return false;
+					}
 				}
 				return true;
 			}
