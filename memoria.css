@@ -1,0 +1,80 @@
+.titulo-sala {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid gray;
+    widows: 80%;
+}
+
+.img-settings {
+    height: 30px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.img-sair {
+    height: 50px;
+    cursor: pointer;
+}
+
+.menu-sair {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 50px;
+}
+
+.img-usuario {
+    height: 150px;
+    border-radius: 50%;
+}
+
+.img-check {
+    height: 100px;
+    margin-top: 60px;
+}
+
+.btn-confirmar {
+    height: 40px;
+    border-radius: 5px;
+    margin-top: 115px;
+}
+
+.card-usuario {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 50%;
+    margin: auto;
+}
+
+.card-grande {
+    background-color: #268F81;
+}
+
+.vs-img {
+    margin-top: 25%;
+}
+
+.corpo-container {
+    padding-top: 60px;
+}
+
+.estado-jogadores {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: gray;
+    color: rgba(111, 255, 236, 0.534);
+    margin-top: 30px;
+    height: 35px;
+}
+
+.linha-titulo {
+    width: 80%;
+    margin: auto;
+}
+
+.cancelar {
+    cursor: pointer;
+}
