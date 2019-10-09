@@ -31,12 +31,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'dados_cadastrais',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'jogodamemoria',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'dados_cadastrais.Usuario'
+
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = 'lobby'
+
+LOGOUT_REDIRECT_URL = LOGIN_URL

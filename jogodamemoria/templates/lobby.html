@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<link rel="stylesheet" href="memoria.css">
+		<link rel="stylesheet" href="../static/css/memoria.css">
 		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
 		<title>Memoria - Lobby</title>
 	</head>
@@ -17,11 +17,14 @@
 				<div class="col-lg-3">
 					<div class="row">
 						<div class="col-lg-8">
-							<span id="userid">UserID</span>
-							<button id="logout" type="button" class="btn btn-danger">Logout</button>
+							<form method="POST" action={% url 'logout' %}>
+							{% csrf_token %}
+								<span id="userid">UserID</span>
+								<button id="logout" type="submit" class="btn btn-danger">Logout</button>
+							</form>
 						</div>
 						<div class="col-lg-4">
-							<img id="userpic" class="img-fluid rounded-circle" src="nopicture.png">
+							<img id="userpic" class="img-fluid rounded-circle" src="../static/img/nopicture.png">
 						</div>
 					</div>
 				</div>

@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<link rel="stylesheet" href="memoria.css">
+		<link rel="stylesheet" href="../static/css/memoria.css">
 		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
 		<title>Sala</title>
 	</head>
@@ -12,11 +12,11 @@
         <div class="row linha-titulo">
             <div class="col-6 titulo-sala">
                 <h1>Nome da Sala</h1> <!-- TODO remover hardcode -->
-                <img src="settings.png" class="img-settings" onclick="abreMenuConfiguracoes()">
+                <img src="../static/img/settings.png" class="img-settings" onclick="abreMenuConfiguracoes()">
             </div>
             <div class="col-6 menu-sair">
                 <div class="text-center">
-                    <img src="sair.png" class="img-sair" onclick="abreModalSairSala()">
+                    <img src="../static/img/sair.png" class="img-sair" onclick="abreModalSairSala()">
                     <p>Sair</p>
                 </div>
             </div>
@@ -26,20 +26,20 @@
                 <div class="card col-sm text-center card-grande">
                     <div class="card-body  card-usuario">
                         <h5 class="card-title">Nome do usuario</h5> <!-- TODO remover hardcode -->
-                        <img src="nopicture.png" class="img-usuario">
+                        <img src="../static/img/nopicture.png" class="img-usuario">
                         <button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>
                     </div>
                 </div>
                 <div class="col-sm text-center">
                     <h5 class="card-title">Dificuldade da partida</h5> <!-- TODO remover hardcode -->
                     <div class="vs-img">
-                        <img src="vs.png" class="img-usuario">
+                        <img src="../static/img/vs.png" class="img-usuario">
                     </div>
                 </div>
                 <div class="card col-sm text-center card-grande">
                     <div class="card-body  card-usuario">
                         <h5 class="card-title">Nome do usuario</h5> <!-- TODO remover hardcode -->
-                        <img src="nopicture.png" class="img-usuario">
+                        <img src="../static/img/nopicture.png" class="img-usuario">
                         <button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
             };
 
             const confirmarPartida = (element) => {
-                $(element).replaceWith('<img class="img-check" src="check.png">');
+                $(element).replaceWith('<img class="img-check" src="../static/img/check.png">');
                 $('.img-check').css({'margin-top': '40px'}).after('<p class="cancelar" onclick="cancelarConfirmacao(this)">Cancelar</p>');
             };
 
