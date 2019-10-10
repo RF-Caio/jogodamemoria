@@ -16,10 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
-    path('lobby/', views.lobby, name='lobby')
+    path('', views.lobby, name='lobby')
 ]
+
+admin.site.site_header = 'Administração - Jogo da Memória'
+admin.site.index_title = 'Site de Administração'
+admin.site.site_title = 'Jogo da Memória'
