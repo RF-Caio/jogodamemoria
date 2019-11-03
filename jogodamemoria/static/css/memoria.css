@@ -78,3 +78,13 @@
 .cancelar {
     cursor: pointer;
 }
+
+.erro {
+    color: red;
+    padding-bottom: 10px;
+}
+
+#loginrequest {
+    margin: auto;
+    margin-top: 65px;
+}

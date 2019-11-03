@@ -22,7 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
-    path('', views.lobby, name='lobby')
+    path('', views.lobby, name='lobby'),
+    path('sala/', views.sala, name='sala'),
+    path('partida/', views.partida, name='partida')
 ]
 
 admin.site.site_header = 'Administração - Jogo da Memória'

@@ -10,19 +10,20 @@
 	</head>
 	<body>
 		<div class="container">
-			{% if erro %}
-				<p>Não foi possível realizar o login. Verifique os dados e tente novamente</p>
-			{% endif %}
 			<form id="loginrequest" class="col-lg-4" method="POST" action={% url 'login' %}>
 				{% csrf_token %}
+                <h4 class="text-center">Login</h4>
 				<div class="form-group">
 					<label for="user">Usuário</label>
-					<input id="user" name="nome" type="text" class="form-control" autofocus>
+					<input id="user" name="nome" type="text" class="form-control" autofocus value="{{ request.POST.nome }}">
 				</div>
 				<div class="form-group">
 					<label for="password">Senha</label>
-					<input id="password" name="senha" type="password" class="form-control">
+					<input id="password" name="senha" type="password" class="form-control" value="{{ request.POST.senha }}">
 				</div>
+                {% if erro %}
+                    <small class="erro">Não foi possível realizar o login. Verifique os dados e tente novamente</small>
+                {% endif %}
 				<center>
 					<button id="entrar" type="submit" class="btn btn-warning col-lg-5">Entrar</button>
 					<button id="novousuario" type="button" class="btn btn-warning col-lg-5" data-toggle="modal" data-target="#newAcc">Criar Conta</button>
@@ -40,29 +41,37 @@
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
+                    <div>
+                        {% if erro_sign_up %}
+                            <small class="erro">Por favor, corrija os erros abaixo.</small>
+                        {% endif %}
+                    </div>
 					<div class="modal-body">
-						<form id="newacc" class="col-lg-12">
+						<form id="newacc" name="newacc" class="col-lg-12" action="{% url 'login' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="formnewacc" value="formnewacc">
 							<div class="form-group">
-								<label for="newuser">Usuário</label>
-								<input id="newuser" type="text" class="form-control">
+								<label for="newuser">*Usuário</label>
+								{{ form.newuser }}
 							</div>
 							<div class="form-group">
 								<label for="newmail">E-Mail</label>
-								<input id="newmail" type="email" class="form-control">
+								{{ form.newmail }}
 							</div>
 							<div class="form-group">
-								<label for="newpass">Senha</label>
-								<input id="newpass" type="password" class="form-control">
+								<label for="newpass">*Senha</label>
+								{{ form.newpass }}
 							</div>
 							<div class="form-group">
-								<label for="newpass2">Confirmar Senha</label>
-								<input id="newpass2" type="password" class="form-control">
+								<label for="newpass2">*Confirmar Senha</label>
+								{{ form.newpass2 }}
+                                <small {% if not erro_senhas %} style="display: none" {% endif %} class="erro" >{{ erro_senhas }}</small>
 							</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" id="createacc" class="btn btn-primary btn-sm">Criar Conta</button>
+                            </div>
 						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-						<button type="button" id="createacc" class="btn btn-primary">Criar Conta</button>
 					</div>
 				</div>	
 			</div>
@@ -152,6 +161,11 @@
 				}
 				return true;
 			}
+
+			window.onload = () => {
+			    $('#id_newpass').addClass('form-control');
+			    $('#id_newpass2').addClass('form-control');
+            }
 		</script>
 	</body>
 </html>

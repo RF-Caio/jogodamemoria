@@ -19,7 +19,7 @@
 						<div class="col-lg-8">
 							<form method="POST" action={% url 'logout' %}>
 							{% csrf_token %}
-								<span id="userid">UserID</span>
+								<span id="userid">{{ request.user.username }}</span>
 								<button id="logout" type="submit" class="btn btn-danger">Logout</button>
 							</form>
 						</div>
@@ -113,7 +113,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-						<button type="button" id="createroom" class="btn btn-primary">Criar Sala</button>
+						<a href="{% url 'sala' %}" id="createroom" class="btn btn-primary">Criar Sala</a>
 					</div>
 				</div>	
 			</div>

@@ -84,6 +84,14 @@
             const confirmarPartida = (element) => {
                 $(element).replaceWith('<img class="img-check" src="../static/img/check.png">');
                 $('.img-check').css({'margin-top': '40px'}).after('<p class="cancelar" onclick="cancelarConfirmacao(this)">Cancelar</p>');
+                let i = 3;
+                setInterval(() => {
+                    $('.estado-jogadores').text('Iniciando em ' + i);
+                    i--;
+                    if(i === 0) {
+                        location.href = '/partida/'
+                    }
+                }, 1000)
             };
 
             const cancelarConfirmacao = (element) => {
