@@ -1,36 +1,29 @@
-<!doctype html>
-<html lang="pt-br">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<link rel="stylesheet" href="../static/css/memoria.css">
-		<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
-		<title>Memoria - Login</title>
-	</head>
-	<body>
-		<div class="container">
-			<form id="loginrequest" class="col-lg-4" method="POST" action={% url 'login' %}>
-				{% csrf_token %}
-                <h4 class="text-center">Login</h4>
-				<div class="form-group">
-					<label for="user">Usuário</label>
-					<input id="user" name="nome" type="text" class="form-control" autofocus value="{{ request.POST.nome }}">
-				</div>
-				<div class="form-group">
-					<label for="password">Senha</label>
-					<input id="password" name="senha" type="password" class="form-control" value="{{ request.POST.senha }}">
-				</div>
-                {% if erro %}
-                    <small class="erro">Não foi possível realizar o login. Verifique os dados e tente novamente</small>
-                {% endif %}
-				<center>
-					<button id="entrar" type="submit" class="btn btn-warning col-lg-5">Entrar</button>
-					<button id="novousuario" type="button" class="btn btn-warning col-lg-5" data-toggle="modal" data-target="#newAcc">Criar Conta</button>
-				</center>
-			</form>
-		</div>
-		
+{% extends 'base_site.html' %}
+{% block title %}
+    <title>Jogo da Memória - Login</title>
+{% endblock %}
+
+{% block content %}
+        <form id="loginrequest" class="col-lg-4" method="POST" action={% url 'login' %}>
+            {% csrf_token %}
+            <h4 class="text-center">Login</h4>
+            <div class="form-group">
+                <label for="user">Usuário</label>
+                <input id="user" name="nome" type="text" class="form-control" autofocus value="{{ request.POST.nome }}">
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input id="password" name="senha" type="password" class="form-control" value="{{ request.POST.senha }}">
+            </div>
+            {% if erro %}
+                <small class="erro">Não foi possível realizar o login. Verifique os dados e tente novamente</small>
+            {% endif %}
+            <center>
+                <button id="entrar" type="submit" class="btn btn-warning col-lg-5">Entrar</button>
+                <button id="novousuario" type="button" class="btn btn-warning col-lg-5" data-toggle="modal" data-target="#newAcc">Criar Conta</button>
+            </center>
+        </form>
+
 		<!-- Modal -->
 		<div class="modal" id="newAcc" aria-labelledby="newAccTitle" aria-hidden="true">
 			<div class="modal-dialog modal-sm" role="document">
@@ -76,96 +69,94 @@
 				</div>	
 			</div>
 		</div>
-		
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-		<script>
-			$(function() {
-				
-			});
-						
-			$("#entrar").on("click", function() {
-				if ($("#user").hasClass("border-danger"))
-					$("#user").removeClass("border-danger");
-				if ($("#password").hasClass("border-danger"))
-					$("#password").removeClass("border-danger");
-				if ($("#user").val() == "") {
-					$("#user").addClass("border-danger");
-					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Usuário não pode estar em branco</div>");
-				}
-				else if ($("#password").val() == "") {
-					$("#password").addClass("border-danger");
-					$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Senha não pode estar em branco</div>");
-				}
-				else {
-					let user = $("#user").val();
-					let pass = $("#password").val();
-					if (Validar(user) && Validar(pass))
-						console.log("credenciais OK");
-						//Submit do formulario
-					else {
-						$("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Nenhum dos campos pode contar caracteres especiais</div>");
-						$("#user").val("");
-						$("#password").val("");
-					}					
-				}
-			});
-			
-			$("#createacc").on("click", function() {
-				if ($("#newuser").val() == "") {
-				
-				}
-				else if ($("#newmail").val() == "") {
-				
-				} 
-				else if ($("#newpass").val() == "") {
-				
-				} 
-				else if ($("#newpass").val() == "") {
-				
-				}
-				else {
-					let user = $("#newuser").val();
-					let mail = $("#newmail").val();
-					let pass = $("#newpass").val();
-						let pass2 = $("#newpass2").val();
-					if (Validar(user) && Validar(pass)){
-						if (pass == pass2){
-							//enviar email de confirmação?
-							console.log("OK");
-						}
-						else {
-							//ERRO: as senhas devem ser iguais
-							console.log("ERRO: as senhas devem ser iguais");
-						}
-					}
-					else {
-						//ERRO: nao podem haver caracteres especiais
-						console.log("ERRO: nao podem haver caracteres especiais");
-					}
-				}
-			});
-			
-			function Validar(cred){
-				if (cred.lenght < 8) {
-					return false;
-				}
-				else {
-					for (let i = 0; i < cred.length; i++){
-						if (!(((cred.charCodeAt(i) >= 48) && (cred.charCodeAt(i) <= 57)) 		//Numeros
-							|| ((cred.charCodeAt(i) >= 65) && (cred.charCodeAt(i) <= 90)) 		//Maiusculas
-							|| ((cred.charCodeAt(i) >= 97) && (cred.charCodeAt(i) <= 122)))) 	//Minusculas
-							return false;
-					}
-				}
-				return true;
-			}
+{% endblock %}
 
-			window.onload = () => {
-			    $('#id_newpass').addClass('form-control');
-			    $('#id_newpass2').addClass('form-control');
+{% block extrajs %}
+    <script>
+        $(function() {
+
+        });
+
+        $("#entrar").on("click", function() {
+            if ($("#user").hasClass("border-danger"))
+                $("#user").removeClass("border-danger");
+            if ($("#password").hasClass("border-danger"))
+                $("#password").removeClass("border-danger");
+            if ($("#user").val() == "") {
+                $("#user").addClass("border-danger");
+                $("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Usuário não pode estar em branco</div>");
             }
-		</script>
-	</body>
-</html>
+            else if ($("#password").val() == "") {
+                $("#password").addClass("border-danger");
+                $("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Senha não pode estar em branco</div>");
+            }
+            else {
+                let user = $("#user").val();
+                let pass = $("#password").val();
+                if (Validar(user) && Validar(pass))
+                    console.log("credenciais OK");
+                    //Submit do formulario
+                else {
+                    $("#loginrequest").append("<br><div class=\"alert alert-danger alert-dismissable\"><a class=\"close\" data-dismiss=\"alert\" href=\"#\">X</a>Nenhum dos campos pode contar caracteres especiais</div>");
+                    $("#user").val("");
+                    $("#password").val("");
+                }
+            }
+        });
+
+        $("#createacc").on("click", function() {
+            if ($("#newuser").val() == "") {
+
+            }
+            else if ($("#newmail").val() == "") {
+
+            }
+            else if ($("#newpass").val() == "") {
+
+            }
+            else if ($("#newpass").val() == "") {
+
+            }
+            else {
+                let user = $("#newuser").val();
+                let mail = $("#newmail").val();
+                let pass = $("#newpass").val();
+                    let pass2 = $("#newpass2").val();
+                if (Validar(user) && Validar(pass)){
+                    if (pass == pass2){
+                        //enviar email de confirmação?
+                        console.log("OK");
+                    }
+                    else {
+                        //ERRO: as senhas devem ser iguais
+                        console.log("ERRO: as senhas devem ser iguais");
+                    }
+                }
+                else {
+                    //ERRO: nao podem haver caracteres especiais
+                    console.log("ERRO: nao podem haver caracteres especiais");
+                }
+            }
+        });
+
+        function Validar(cred){
+            if (cred.lenght < 8) {
+                return false;
+            }
+            else {
+                for (let i = 0; i < cred.length; i++){
+                    if (!(((cred.charCodeAt(i) >= 48) && (cred.charCodeAt(i) <= 57)) 		//Numeros
+                        || ((cred.charCodeAt(i) >= 65) && (cred.charCodeAt(i) <= 90)) 		//Maiusculas
+                        || ((cred.charCodeAt(i) >= 97) && (cred.charCodeAt(i) <= 122)))) 	//Minusculas
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        window.onload = () => {
+            $('#id_newpass').addClass('form-control');
+            $('#id_newpass2').addClass('form-control');
+        }
+    </script>
+{% endblock %}
