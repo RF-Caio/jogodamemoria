@@ -66,4 +66,4 @@ def sala(request):
 
 @login_required
 def partida(request):
-    return render(request, 'index.html')
+    return render(request, 'jogo.html')

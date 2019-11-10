@@ -1,0 +1,70 @@
+.item {
+    padding: 1%;
+    float: left;
+    width: 18%;
+    height: 14.5%;
+}
+.imagem {
+    top: 1px;
+    padding: 1%;
+    width: 100%;
+    height: 100%;
+}
+.Principal {
+    top: 0;
+    position: relative;
+    width: 98%;
+    height: 95vh;
+    border: 3px solid rgb(255, 180, 18);
+    left: 10px;
+    background: url("/static/img/cartas/Plano_de_fundo.jpg");
+}
+.container {
+    top: 2px;
+    position: absolute;
+    right: 2px;
+    width: 60%;
+    height: 98%;
+    border: 3px solid rgb(255, 224, 47);
+}
+.Containerposisao {
+    margin: 1px;
+    right: 20px;
+}
+.LadoA {
+    padding: 1%;
+    float: left;
+}
+.Botao {
+    width: 100%;
+    height: 100%;
+    padding: 50px;
+    border: 5px solid black;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 30px;
+    background: coral;
+}
+.botaomover {
+    position: fixed;
+    left: 10%;
+    bottom: 5%;
+    right: 70%;
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+.texto-tentativas{
+    position: relative;
+    font-size: 40px;
+     left:5% ;
+     top: 10%;
+}
+.botaomover2{
+    position: fixed;
+    left: 10%;
+    top:40%;
+    right: 70%;
+}

@@ -1,0 +1,116 @@
+{#{% extends 'base_site.html' %}#}
+
+{% load static staticfiles %}
+{% load i18n %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/jogo.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="Principal">
+        <div class="botaomover">
+            <button id="jogar" value="Começar" class="Botao" onclick="start()">Começar</button>
+        </div>
+        <div class="texto-tentativas">
+            <label>Tentativas: <div id="tentativas"></div></label><br>
+            <label>Acertos: <div id="numacertos"></div></label><br>
+            <label>Erros: <div id="numerros"></div></label>
+        </div>
+        <div class="botaomover2" style="display:none" id="ganhouu">
+            <button id="ganhou" value="Começar" class="Botao" >Parabens Voce Ganhou!!!!!!!!!!!</button>
+        </div>
+        <div id="container" class="container">
+        </div>
+    </div>
+<script>
+    var posSelecionada = null;
+    var jogadaFinalizada = false;
+    var contador = 0;
+    var mesa = [];
+    var casas = 15;
+    var tentativas;
+    var numerros;
+
+    function getPersonagem() {
+        var idx = Math.ceil(Math.random() * casas);
+        if (mesa.filter(it => it.nome === idx).length >= 2) {
+            return getPersonagem()
+        }
+        return idx
+    }
+
+    function gerarMesa() {
+        mesa = [];
+        for (var i = 0; i < casas * 2; i++) {
+            mesa.push({
+                nome: getPersonagem(),
+                isVirada: false,
+                isCertou: false
+            })
+        }
+    }
+    function start() {
+        document.querySelector("#tentativas").textContent = tentativas=0;
+        document.querySelector("#tentativas").textContent = contador=0;
+        document.querySelector("#numerros").textContent = numerros=0;
+        gerarMesa();
+        render();
+        contador = 0;
+    }
+
+    function render() {
+        document.querySelector("#tentativas").textContent = tentativas;
+        document.querySelector("#numacertos").textContent = contador;
+        document.querySelector("#numerros").textContent = numerros;
+        if(contador===15){
+            document.querySelector("#ganhouu").style.display = 'block';
+        }
+        else{
+            document.querySelector("#ganhouu").style.display = 'none';
+        }
+        var container = document.querySelector("#container");
+
+        container.innerHTML = "";
+
+        for (var i = 0; i < mesa.length; i++) {
+
+            container.innerHTML += `<div onClick="jogada(this)" seq=${i}  class="item"  >
+                    <img class="imagem clearfix" src="/static/img/cartas/${ mesa[i].isVirada ? mesa[i].nome + '.jpg' : "Carta.png"}"/>
+                </div>`
+        }
+    }
+
+    function jogada(e) {
+        var seq = Number(e.getAttribute("seq"));
+        mesa[seq].isVirada = true;
+
+            if (posSelecionada === null) {
+                posSelecionada = Number(e.getAttribute("seq"));
+
+                jogadaFinalizada = false
+                tentativas=tentativas+1;
+
+            } else if (jogadaFinalizada === false && posSelecionada != seq) {
+
+                if (mesa[seq].nome === mesa[posSelecionada].nome) {
+                    mesa[posSelecionada].isCertou = true
+                    mesa[seq].isCertou = true
+                    contador = contador + 1;
+                }
+                else{
+                        numerros= numerros+1;
+                       }
+                jogadaFinalizada = true
+            } else {
+                for (var i = 0; i < mesa.length; i++) {
+                    if (!mesa[i].isCertou) {
+                        mesa[i].isVirada = false
+                    }
+                }
+                posSelecionada = null
+            }
+            render()
+    }
+</script>
+{% endblock %}
