@@ -1,1 +1,1 @@
-web: gunicorn jogodamemoria.wsgi.py
+web: gunicorn jogodamemoria.wsgi
