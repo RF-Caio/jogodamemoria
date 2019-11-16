@@ -1,4 +1,5 @@
 {% extends 'base_site.html' %}
+{% load static %}
     {% block title %}
         <title>Memoria - Lobby</title>
     {% endblock %}
@@ -18,7 +19,7 @@
                         </form>
                     </div>
                     <div class="col-lg-4">
-                        <img id="userpic" class="img-fluid rounded-circle" src="../static/img/nopicture.png">
+                        <img id="userpic" class="img-fluid rounded-circle" src="{% static 'img/nopicture.png' %}">
                     </div>
                 </div>
             </div>
@@ -26,25 +27,55 @@
         <br>
         <div class="row">
             <div class="col-lg-8">
-                <h3>SALAS</h3>
-                <table id="salas" class="table table-striped">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Nome da sala</th>
-                            <th>Criador</th>
-                            <th>Tipo</th>
-                            <th>Dificuldade</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <h3 class="white">SALAS</h3>
+                {% if salas %}
+                    <input class="col-lg-12 busca" id="buscasala" type="text" placeholder="Procure pelo nome da sala">
+                    <table id="salas" class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nome da sala</th>
+                                <th>Criador</th>
+                                <th>Tipo</th>
+                                <th>Dificuldade</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for sala in salas %}
+                            <tr>
+                                <td>{{ sala.posicao }}</td>
+                                <td>{{ sala }}</td>
+                                <td>{{ sala.player1 }}</td>
+                                <td>{{ sala.get_tipo_partida_display }}</td>
+                                <td>{{ sala.get_level_partida_display }}</td>
+                                <td>{{ sala.get_estado_display }}</td>
+                                {% if sala.estado == 'A' %}
+                                    <td>
+                                        <form name="entrar-partida-form" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="entrar-partida">
+                                            <input type="hidden" name="id-sala-{{ sala.id }}">
+                                            <button type="submit" name="entrar-partida" id="entrar-partida">Entrar</button>
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="mensagem-sem-partida text-center">
+                        <p>Não há salas abertas no momento</p>
+                    </div>
+                {% endif %}
+                <button id="queue" class="btn bt-padrao" type="button">Partida Rápida</button>
+                <button id="criar" class="btn bt-padrao" type="button" data-toggle="modal" data-target="#criarSala">Criar Sala</button>
             </div>
             <div class="col-lg-4">
-                <h3>RANKING</h3>
+                <h3 class="white">RANKING</h3>
+                <input class="col-lg-12 busca" id="buscajogador" type="text" placeholder="Procure pelo nome do jogador">
                 <table id="ranking" class="table table-striped">
                     <thead class="thead-light">
                         <tr>
@@ -54,16 +85,17 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% for jogador in jogadores %}
+                        <tr>
+                            <td>{{ jogador.posicao }}</td>
+                            <td>{{ jogador }}</td>
+                            <td>{{ jogador.ranked_win }}</td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="row">
-            <input id="busca" type="text" placeholder="Procure pelo nome da sala">
-            <button id="queue" class="btn btn-warning" type="button">Partida Rápida</button>
-            <button id="criar" class="btn btn-warning" type="button" data-toggle="modal" data-target="#criarSala">Criar Sala</button>
-        </div>
-
     <!-- Modal -->
     <div class="modal" id="criarSala" aria-labelledby="criarSalaTitle" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
@@ -75,38 +107,44 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="" class="col-lg-12">
+                    <form id="" class="col-lg-12" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="criar-sala">
                         <div class="form-group">
                             <b><label for="newroom">Nome da Sala</label></b>
-                            <input id="newroom" type="text" class="form-control">
+                            <input name="nome_partida" id="nome_partida" type="text" class="form-control">
                         </div>
                         <div class="form-group">
                             <b><label>Tipo de partida</label></b><br/>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="tipoPartida" id="casualRadio" value="0">
-                                <label class="form-check-label" for="casualRadio">Casual</label>
-                                <input class="form-check-input" type="radio" name="tipoPartida" id="rankRadio" value="1">
-                                <label class="form-check-label" for="rankRadio">Ranqueada</label>
+                                <h6>
+                                    <input class="form-check-input" type="radio" name="tipo_partida" id="casualRadio" value="C" checked>
+                                    <label class="form-check-label" for="casualRadio">Casual</label>
+                                    <input class="form-check-input" type="radio" name="tipo_partida" id="rankRadio" value="R">
+                                    <label class="form-check-label" for="rankRadio">Ranqueada</label>
+                                </h6>
                             </div>
                         </div>
                         <div class="form-group">
-                            </b><label>Dificuldade</label></b><br />
+                            <b><label>Dificuldade</label></b><br />
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="difPartida" id="facRadio" value="0">
-                                <label class="form-check-label" for="facRadio">Fácil</label>
-                                <input class="form-check-input" type="radio" name="difPartida" id="norRadio" value="1">
-                                <label class="form-check-label" for="intRadio">Normal</label>
-                                <input class="form-check-input" type="radio" name="difPartida" id="difRadio" value="2">
-                                <label class="form-check-label" for="difRadio">Difícil</label>
-                                <input class="form-check-input" type="radio" name="difPartida" id="fatRadio" value="3">
-                                <label class="form-check-label" for="fatRadio">FATEC</label>
+                                <h6>
+                                    <input class="form-check-input" type="radio" name="level_partida" id="facRadio" value="I">
+                                    <label class="form-check-label" for="facRadio">Fácil</label>
+                                    <input class="form-check-input" type="radio" name="level_partida" id="norRadio" value="O" checked>
+                                    <label class="form-check-label" for="intRadio">Normal</label>
+                                    <input class="form-check-input" type="radio" name="level_partida" id="difRadio" value="D">
+                                    <label class="form-check-label" for="difRadio">Difícil</label>
+                                    <input class="form-check-input" type="radio" name="level_partida" id="fatRadio" value="F">
+                                    <label class="form-check-label" for="fatRadio">FATEC</label>
+                                </h6>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
+                            <button type="submit" id="createroom" class="btn btn-primary">CRIAR SALA</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <a href="{% url 'sala' %}" id="createroom" class="btn btn-primary">Criar Sala</a>
                 </div>
             </div>
         </div>

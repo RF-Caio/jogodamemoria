@@ -14,17 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from . import views
+from django.urls import path, include
+
+from . import views, views_rest
 from django.contrib import admin
+from rest_framework import routers
+
+# router = routers.DefaultRouter()
+# router.register(r'salas', views_rest.SalaList)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     path('', views.lobby, name='lobby'),
-    path('sala/', views.sala, name='sala'),
-    path('partida/', views.partida, name='partida')
+    path('sala/<int:id_sala>/<int:id_jogador>', views.sala, name='sala'),
+    path('partida/', views.partida, name='partida'),
+    path('api_rest/list_sala/', views_rest.SalaList.as_view()),
+    path('api_auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('atualiza_dados_jogador/', views.atualiza_estado_jogador_sala, name='dados_jogador')
 ]
 
 admin.site.site_header = 'Administração - Jogo da Memória'

@@ -88,3 +88,8 @@
     margin: auto;
     margin-top: 65px;
 }
+
+.mensagem-sem-partida {
+    background-color: #447e9b;
+    height: 35px;
+}

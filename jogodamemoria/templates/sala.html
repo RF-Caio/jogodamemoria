@@ -1,4 +1,5 @@
 {% extends 'base_site.html' %}
+{% load static %}
 {% block title %}
     <title>Jogo da Memória - Sala</title>
 {% endblock %}
@@ -6,13 +7,13 @@
 {% block content %}
     <div class="row linha-titulo">
         <div class="col-6 titulo-sala">
-            <h1>Nome da Sala</h1> <!-- TODO remover hardcode -->
-            <img src="../static/img/settings.png" class="img-settings" onclick="abreMenuConfiguracoes()">
+            <h1 id="nome-sala">{{ sala.nome_partida }}</h1>
+            <img src="{% static '/img/settings.png' %}" class="img-settings" onclick="abreMenuConfiguracoes()">
         </div>
         <div class="col-6 menu-sair">
             <div class="text-center">
-                <img src="../static/img/sair.png" class="img-sair" onclick="abreModalSairSala()">
-                <p>Sair</p>
+                <img src="{% static 'img/sair.png' %}" class="img-sair" onclick="abreModalSairSala()">
+                <p><button class="btn" onclick="abreModalSairSala()">Sair</button></p>
             </div>
         </div>
     </div>
@@ -20,22 +21,29 @@
         <div class="row">
             <div class="card col-sm text-center card-grande">
                 <div class="card-body  card-usuario">
-                    <h5 class="card-title">Nome do usuario</h5> <!-- TODO remover hardcode -->
-                    <img src="../static/img/nopicture.png" class="img-usuario">
-                    <button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>
+                    <img src="{% static 'img/nopicture.png' %}" class="img-usuario">
+                    <h5 class="card-title">{{ sala.player1.username }}</h5>
+                    <button class="btn-confirmar" id="btn-{{ sala.player1.id }}" onclick="confirmarPartida(this)">Confirmar</button>
                 </div>
             </div>
             <div class="col-sm text-center">
-                <h5 class="card-title">Dificuldade da partida</h5> <!-- TODO remover hardcode -->
+                <h4 id="tipo" class="card-title white">{{ sala.get_tipo_partida_display }}</h4>
+                <h5 id="dificuldade" class="card-title white">{{ sala.get_level_partida_display }}</h5>
                 <div class="vs-img">
-                    <img src="../static/img/vs.png" class="img-usuario">
+                    <img src="{% static 'img/vs.png' %}" class="img-usuario">
                 </div>
             </div>
             <div class="card col-sm text-center card-grande">
                 <div class="card-body  card-usuario">
-                    <h5 class="card-title">Nome do usuario</h5> <!-- TODO remover hardcode -->
-                    <img src="../static/img/nopicture.png" class="img-usuario">
-                    <button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>
+                    <img src="{% static 'img/nopicture.png' %}" class="img-usuario">
+                    <h5 class="card-title">
+                        {% if sala.player2 %}
+                            {{ sala.player2 }}
+                        {% else %}
+                            Aguardando segundo jogador...
+                        {% endif %}
+                    </h5>
+                    <button class="btn-confirmar" id="btn-{{ sala.player2.id }}" onclick="confirmarPartida(this)">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -48,17 +56,21 @@
 
     <!-- Modal -->
     <div class="modal" id="modalSairSala" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newAccTitle">Tem certeza que deseja sair da sala?</h5>
+                    <h5 class="modal-title" id="exitTitle">Tem certeza que deseja sair?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" id="createacc" class="btn btn-primary" onclick="history.back()">Sair</button> <!-- TODO redirecionar para o lobby -->
+                    <form name="form-sair-sala" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="sair-sala">
+                        <button type="button" class="btn bt-modal" data-dismiss="modal">CANCELAR</button>
+                        <button type="submit" class="btn bt-modal">SAIR</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -67,6 +79,17 @@
 		
 {% block extrajs %}
     <script>
+        window.onload = () => {
+            const player1Rpr = $('#btn-' + '{{ sala.player1.id }}');
+            const player2Rpr = $('#btn-' + '{{ sala.player2.id }}');
+            if('{{ sala.player1_ok }}' === 'True' && !player1Rpr.length) {
+                confirmarPartida(player1Rpr)
+            }
+            if('{{ sala.player2_ok }}' === 'True' && !player2Rpr.length) {
+                confirmarPartida(player2Rpr)
+            }
+        };
+
         const abreMenuConfiguracoes = () => {
             alert('Implementar o menu!!!');
         };
@@ -76,16 +99,30 @@
         };
 
         const confirmarPartida = (element) => {
-            $(element).replaceWith('<img class="img-check" src="../static/img/check.png">');
+            $(element).replaceWith('<img class="img-check" src="{% static "img/check.png" %}">');
             $('.img-check').css({'margin-top': '40px'}).after('<p class="cancelar" onclick="cancelarConfirmacao(this)">Cancelar</p>');
-            let i = 3;
-            setInterval(() => {
-                $('.estado-jogadores').text('Iniciando em ' + i + '...');
-                i--;
-                if(i === 0) {
-                    location.href = '/partida/'
-                }
-            }, 1000)
+            {#let i = 3;#}
+            {#setInterval(() => {#}
+            {#    $('.estado-jogadores').text('Iniciando em ' + i + '...');#}
+            {#    i--;#}
+            {#    if(i === 0) {#}
+            {#        location.href = '/partida/'#}
+            {#    }#}
+            let data = {
+                id_sala: {{ sala.id }},
+                id_jogador: {{ request.user.id }},
+            };
+
+            fetch('{% url 'dados_jogador' %}', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                credentials: 'same-origin'
+            }).then(response => {
+                console.log(response);
+            }).catch(error => {
+                console.log(error);
+            })
         };
 
         const cancelarConfirmacao = (element) => {
@@ -94,4 +131,5 @@
             imgCheck.replaceWith('<button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>');
         };
     </script>
+    <script src="{% static 'js/utils.js' %}"></script>
 {% endblock %}
