@@ -29,10 +29,11 @@ urlpatterns = [
     path('logout/', views.logout_user, name='logout'),
     path('', views.lobby, name='lobby'),
     path('sala/<int:id_sala>/<int:id_jogador>', views.sala, name='sala'),
-    path('partida/', views.partida, name='partida'),
+    path('partida/<int:id_partida>/<int:id_jogador>', views.partida, name='partida'),
     path('api_rest/list_sala/', views_rest.SalaList.as_view()),
     path('api_auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('atualiza_dados_jogador/', views.atualiza_estado_jogador_sala, name='dados_jogador')
+    path('atualiza_dados_jogador/', views.atualiza_estado_jogador_sala, name='dados_jogador'),
+    path('atualiza_outro_jogador/', views.atualiza_outro_jogador, name='atualiza_outro_jogador')
 ]
 
 admin.site.site_header = 'Administração - Jogo da Memória'

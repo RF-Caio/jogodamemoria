@@ -23,7 +23,15 @@
                 <div class="card-body  card-usuario">
                     <img src="{% static 'img/nopicture.png' %}" class="img-usuario">
                     <h5 class="card-title">{{ sala.player1.username }}</h5>
-                    <button class="btn-confirmar" id="btn-{{ sala.player1.id }}" onclick="confirmarPartida(this)">Confirmar</button>
+                    {% if sala.player1 == request.user %}
+                        <button class="btn-confirmar" id="btn-{{ sala.player1.id }}" {% if not sala.player2 %} disabled {% endif %} onclick="confirmarPartida(this)">Confirmar</button>
+                    {% else %}
+                        {% if sala.player1_ok %}
+                            <h5 class="card-title">Pronto!</h5>
+                        {% else %}
+                            <h5 class="card-title">Aguardando adversário</h5>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             <div class="col-sm text-center">
@@ -36,14 +44,25 @@
             <div class="card col-sm text-center card-grande">
                 <div class="card-body  card-usuario">
                     <img src="{% static 'img/nopicture.png' %}" class="img-usuario">
-                    <h5 class="card-title">
-                        {% if sala.player2 %}
-                            {{ sala.player2 }}
+                    {% if sala.player2 %}
+                        {% if sala.player2 == request.user %}
+                            <h5 class="card-title">{{ sala.player2 }}</h5>
+                            <button class="btn-confirmar" id="btn-{{ sala.player2.id }}" onclick="confirmarPartida(this)">Confirmar</button>
                         {% else %}
-                            Aguardando segundo jogador...
+                            <h5 class="card-title">{{ sala.player2.username }}</h5>
+                            {% if sala.player2_ok %}
+                                <h5 class="card-title">Pronto!</h5>
+                            {% else %}
+                                <h5 class="card-title">Aguardando confirmação...</h5>
+                            {% endif %}
                         {% endif %}
-                    </h5>
-                    <button class="btn-confirmar" id="btn-{{ sala.player2.id }}" onclick="confirmarPartida(this)">Confirmar</button>
+                    {% else %}
+                        {% if sala.player1_ok %}
+                            <h5 class="card-title">Pronto!</h5>
+                        {% else %}
+                            <h5 class="card-title">Aguardando adversário</h5>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -79,13 +98,20 @@
 		
 {% block extrajs %}
     <script>
+        var ultimaAtualizacao = {};
+
+        var player1_ok = '{{ sala.player1_ok }}' === 'True';
+        var player2_ok = '{{ sala.player2_ok }}' === 'True';
+        var player1_id = '{{ sala.player1.id }}';
+        var player2_id = '{{ sala.player2.id }}';
+
         window.onload = () => {
-            const player1Rpr = $('#btn-' + '{{ sala.player1.id }}');
-            const player2Rpr = $('#btn-' + '{{ sala.player2.id }}');
-            if('{{ sala.player1_ok }}' === 'True' && !player1Rpr.length) {
+            let player1Rpr = $('#btn-' + '{{ sala.player1.id }}');
+            let player2Rpr = $('#btn-' + '{{ sala.player2.id }}');
+            if(player1_ok && player1Rpr.length === 1) {
                 confirmarPartida(player1Rpr)
             }
-            if('{{ sala.player2_ok }}' === 'True' && !player2Rpr.length) {
+            if(player2_ok && player2Rpr.length === 1) {
                 confirmarPartida(player2Rpr)
             }
         };
@@ -99,21 +125,96 @@
         };
 
         const confirmarPartida = (element) => {
-            $(element).replaceWith('<img class="img-check" src="{% static "img/check.png" %}">');
+            $(element).replaceWith('<img id="img-{{ request.user.id }}" class="img-check" src="{% static "img/check.png" %}">');
             $('.img-check').css({'margin-top': '40px'}).after('<p class="cancelar" onclick="cancelarConfirmacao(this)">Cancelar</p>');
-            {#let i = 3;#}
-            {#setInterval(() => {#}
-            {#    $('.estado-jogadores').text('Iniciando em ' + i + '...');#}
-            {#    i--;#}
-            {#    if(i === 0) {#}
-            {#        location.href = '/partida/'#}
-            {#    }#}
+
             let data = {
                 id_sala: {{ sala.id }},
                 id_jogador: {{ request.user.id }},
+                tipo_atualizacao: 'confirmar'
             };
+            player1_ok = true;
 
-            fetch('{% url 'dados_jogador' %}', {
+            enviaDadosAtualizacao('{% url 'dados_jogador' %}', data);
+        };
+
+        const cancelarConfirmacao = (element) => {
+            const imgCheck = $(element).prev();
+            $(element).remove();
+            imgCheck.replaceWith('<button id="btn-{{ request.user.id }}" class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>');
+
+            let data = {
+                id_sala: {{ sala.id }},
+                id_jogador: {{ request.user.id }},
+                tipo_atualizacao: 'cancelar'
+            };
+            player1_ok = false;
+
+            enviaDadosAtualizacao('{% url 'dados_jogador' %}', data);
+        };
+
+        const atualizaEstado = () => {
+            location.reload()
+        };
+
+        const verificaOutroJogador = () => {
+            const data = {};
+            const url = '{% url 'atualiza_outro_jogador' %}';
+
+            if('{{ request.user.id }}' === '{{ sala.player1.id }}') {
+                data.estado = '{{ sala.player2_ok }}' === 'True';
+                data.estaNaSala = '{{ sala.estado }}';
+                data.idJogador = {{ request.user.id }};
+                data.idJogador2 = '{{ sala.player2.id }}';
+            } else {
+                data.estado = '{{ sala.player1_ok }}' === 'True';
+                data.estaNaSala = '{{ sala.player2 }}' !== undefined;
+                data.idJogador = '{{ sala.player1.id }}';
+                data.idJogador2 = '{{ sala.player2.id }}';
+
+            }
+
+            data.idSala = '{{ sala.id }}';
+
+            console.log(data);
+
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                credentials: 'same-origin'
+            }).then(response => response = response.json()
+            ).then(data => {
+                console.log(data.atualiza);
+                if(data.atualiza === true) atualizaEstado();
+            }).catch(error => {
+                console.log(error);
+            })
+        };
+
+        const verificaInicioPartida = () => {
+            if(player1_ok && player2_ok) {
+                let i = 3;
+                setInterval(() => {
+                    $('.estado-jogadores').text('Iniciando em ' + i + '...');
+                    i--;
+                    if(i === 0) {
+                        location.href = '{% url 'partida' sala.id request.user.id %}'
+                    }
+                }, 1000)
+            }
+        };
+
+        setInterval(() => {
+            verificaInicioPartida();
+        },5000);
+
+        setInterval(() => {
+            verificaOutroJogador();
+        }, 1000);
+
+        const enviaDadosAtualizacao = (url, data) => {
+            fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
@@ -123,12 +224,6 @@
             }).catch(error => {
                 console.log(error);
             })
-        };
-
-        const cancelarConfirmacao = (element) => {
-            const imgCheck = $(element).prev();
-            $(element).remove();
-            imgCheck.replaceWith('<button class="btn-confirmar" onclick="confirmarPartida(this)">Confirmar</button>');
         };
     </script>
     <script src="{% static 'js/utils.js' %}"></script>

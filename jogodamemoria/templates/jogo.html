@@ -8,6 +8,45 @@
 {% endblock %}
 
 {% block content %}
+    <center>
+        <h1 class="white">JOGO DA MEMORIA</h1>
+    </center>
+    <div class="row">
+        <div id="p1" class="col-lg-2">
+            <!-- carta p1 -->
+            <div class="card-grande user-box">
+                <center>
+                    <img src="{% static 'img/nopicture.png' %}" class="img-ingame">
+                    <h5 class="card-title white">Nome do usuario</h5> <!-- TODO remover hardcode -->
+                    <br/>
+                    <h3 id="p1pontuacao">00</h3>
+                    <br/>
+                    <h4 id="p1timer">15s</h4>
+                    <br/>
+                    <button id="p1ff" class="button bt-cancel" onclick="desistir(this.id)">DESISTIR</button>
+                </center>
+            </div>
+        </div>
+        <div id="container" class="board col-lg-8">
+            <!-- tabuleiro -->
+
+        </div>
+        <div id="p2" class="col-lg-2">
+            <!-- carta p2 -->
+            <div class="card-grande user-box">
+                <center>
+                    <img src="{% static 'img/nopicture.png' %}" class="img-ingame">
+                    <h5 class="card-title white">Nome do usuario</h5> <!-- TODO remover hardcode -->
+                    <br/>
+                    <h3 id="p2pontuacao">00</h3>
+                    <br/>
+                    <h4 id="p2timer">15s</h4>
+                    <br/>
+                    <button id="p2ff" class="button bt-cancel" onclick="desistir(this.id)">DESISTIR</button>
+                </center>
+            </div>
+        </div>
+    </div>
     <div class="Principal">
         <div class="botaomover">
             <button id="jogar" value="Começar" class="Botao" onclick="start()">Começar</button>

@@ -121,6 +121,7 @@ def sala(request, id_sala, id_jogador):
 
 @login_required
 def partida(request, id_partida, id_jogador):
+    partida = get_object_or_404(ControlePartida, pk=id_partida)
     return render(request, 'jogo.html')
 
 
@@ -128,9 +129,36 @@ def atualiza_estado_jogador_sala(request):
     data = json.loads(request.body)
     sala = get_object_or_404(ControlePartida, pk=data['id_sala'])
     if data['id_jogador'] == sala.player1.id:
-        sala.player1_ok = True
+        sala.player1_ok = data['tipo_atualizacao'] == 'confirmar'
     else:
-        sala.player2_ok = True
+        sala.player2_ok = data['tipo_atualizacao'] == 'confirmar'
     sala.save()
 
     return HttpResponse('ok')
+
+
+def atualiza_outro_jogador(request):
+    data = json.loads(request.body)
+    sala = get_object_or_404(ControlePartida, pk=data['idSala'])
+    estado_adversario = data['estado']
+    id_jogador = data['idJogador']
+    id_jogador2 = data.get('idJogador2', None)
+    id_jogador2 = int(id_jogador2) if id_jogador2 else id_jogador2
+
+    response = {
+        'atualiza': False
+    }
+
+    print(sala.player2 and sala.player2.id != id_jogador2)
+    if id_jogador == sala.player1.id:
+        if sala.player2_ok != estado_adversario:
+            response['atualiza'] = True
+        elif sala.player2 and sala.player2.id != id_jogador2:
+            response['atualiza'] = True
+        elif not sala.player2 and id_jogador2:
+            response['atualiza'] = True
+    else:
+        if sala.player1_ok != estado_adversario or sala.estado != ControlePartida.ABERTA:
+            response['atualiza'] = True
+
+    return JsonResponse(response)

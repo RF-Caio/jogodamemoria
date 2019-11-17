@@ -8,19 +8,19 @@
             {% csrf_token %}
             <h4 class="text-center">Login</h4>
             <div class="form-group">
-                <label for="user">Usuário</label>
+                <label for="user" class="white">Usuário</label>
                 <input id="user" name="nome" type="text" class="form-control" autofocus value="{{ request.POST.nome }}">
             </div>
             <div class="form-group">
-                <label for="password">Senha</label>
+                <label for="password" class="white">Senha</label>
                 <input id="password" name="senha" type="password" class="form-control" value="{{ request.POST.senha }}">
             </div>
             {% if erro %}
                 <small class="erro">Não foi possível realizar o login. Verifique os dados e tente novamente</small>
             {% endif %}
             <center>
-                <button id="entrar" type="submit" class="btn btn-warning col-lg-5">Entrar</button>
-                <button id="novousuario" type="button" class="btn btn-warning col-lg-5" data-toggle="modal" data-target="#newAcc">Criar Conta</button>
+                <button id="entrar" type="submit" class="btn bt-padrao col-lg-5">ENTRAR</button>
+                <button id="novousuario" type="button" class="btn bt-padrao col-lg-5" data-toggle="modal" data-target="#newAcc">CRIAR CONTA</button>
             </center>
         </form>
 
@@ -61,8 +61,8 @@
                                 <small {% if not erro_senhas %} style="display: none" {% endif %} class="erro" >{{ erro_senhas }}</small>
 							</div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" id="createacc" class="btn btn-primary btn-sm">Criar Conta</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">CANCELAR</button>
+                                <button type="submit" id="createacc" class="btn btn-primary btn-sm">CRIAR CONTA</button>
                             </div>
 						</form>
 					</div>

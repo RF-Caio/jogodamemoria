@@ -1,3 +1,68 @@
+body {
+	background-color: #547280;
+}
+
+h1 {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+button {
+	cursor: pointer;
+}
+
+.board {
+	background-color: darkgrey;
+	border-radius: 3%;
+	box-shadow: 3px 3px 10px 10px black;
+}
+
+.game-card {
+	height: 120px;
+	width: 90px;
+	cursor: pointer;
+}
+
+/* cor da tabela #307775 */
+
+.white {
+	color: white;
+	font-weight: bold;
+}
+
+.busca {
+	background-color: #eeeeee;
+}
+
+.bt-cancel {
+	font-weight: bold;
+	color: red;
+	background-color: white;
+}
+
+.bt-padrao {
+	font-weight: bold;
+	color: #aaaaaa;
+	background-color: #eeeeee;
+}
+
+.bt-modal {
+	font-weight: bold;
+	color: #268F81;
+	background-color: white;
+	border-bottom-color: #268F81;
+}
+
+.bt-modal:hover {
+	background-color: #268F81;
+	color: white;
+}
+
+
+
+
+
+
 .titulo-sala {
     display: flex;
     flex-direction: row;
