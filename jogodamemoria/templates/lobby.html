@@ -19,7 +19,11 @@
                         </form>
                     </div>
                     <div class="col-lg-4">
-                        <img id="userpic" class="img-fluid rounded-circle" src="{% static 'img/nopicture.png' %}">
+                        {% if request.user.user_image %}
+                            <img style="cursor: pointer" id="userpic" class="img-fluid rounded-circle" data-toggle="modal" data-target="#alterarFoto" src="{% get_media_prefix %}{{ request.user.user_image }}">
+                        {% else %}
+                            <img style="cursor: pointer" id="userpic" class="img-fluid rounded-circle" data-toggle="modal" data-target="#alterarFoto" src="{% static 'img/nopicture.png' %}">
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -29,7 +33,11 @@
             <div class="col-lg-8">
                 <h3 class="white">SALAS</h3>
                 {% if salas %}
-                    <input class="col-lg-12 busca" id="buscasala" type="text" placeholder="Procure pelo nome da sala">
+                    <form id="form-busca-sala" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="busca-sala">
+                        <input class="col-lg-12 busca" id="buscasala" name="s" type="text" placeholder="Procure pelo nome da sala">
+                    </form>
                     <table id="salas" class="table table-striped">
                         <thead class="thead-light">
                             <tr>
@@ -75,7 +83,11 @@
             </div>
             <div class="col-lg-4">
                 <h3 class="white">RANKING</h3>
-                <input class="col-lg-12 busca" id="buscajogador" type="text" placeholder="Procure pelo nome do jogador">
+                <form id="form-busca-jogador" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="busca-jogador">
+                    <input class="col-lg-12 busca" name="j" id="buscajogador" type="text" placeholder="Procure pelo nome do jogador">
+                </form>
                 <table id="ranking" class="table table-striped">
                     <thead class="thead-light">
                         <tr>
@@ -143,6 +155,32 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
                             <button type="submit" id="createroom" class="btn btn-primary">CRIAR SALA</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="alterarFoto" aria-labelledby="alterarFotoTitle" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alterarFotoTitle">Alterar foto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="" class="col-lg-12" enctype="multipart/form-data" method="post">
+                        {% csrf_token %}
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="arquivo" accept="images/*">
+                            <label class="custom-file-label" for="arquivo">Escolha um arquivo</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
+                            <button type="submit" id="createroom" class="btn btn-primary">Alterar foto</button>
                         </div>
                     </form>
                 </div>

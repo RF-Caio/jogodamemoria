@@ -16,6 +16,7 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR,'MEDIA')
+MEDIA_URL = "MEDIA/"
 
 
 # Quick-start development settings - unsuitable for production
@@ -41,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'jogodamemoria.apps.JogodaMemoriaConfig',
-    'rest_framework'
+    'rest_framework',
+    'core',
+    'django_filters'
+
 ]
 
 MIDDLEWARE = [
@@ -55,6 +59,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'jogodamemoria.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 TEMPLATES = [
     {

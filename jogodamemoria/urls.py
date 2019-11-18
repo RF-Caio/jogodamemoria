@@ -18,12 +18,16 @@ from django.urls import path, include
 
 from . import views, views_rest
 from django.contrib import admin
+from core.views import JogadaViewSet, JogadaTurnoViewSet, ShuffleViewSet
 from rest_framework import routers
 
-# router = routers.DefaultRouter()
-# router.register(r'salas', views_rest.SalaList)
+router = routers.SimpleRouter()
+router.register(r'jogadas', JogadaViewSet)
+router.register(r'jogadaturno', JogadaTurnoViewSet)
+router.register(r'shuffle', ShuffleViewSet)
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
@@ -31,7 +35,7 @@ urlpatterns = [
     path('sala/<int:id_sala>/<int:id_jogador>', views.sala, name='sala'),
     path('partida/<int:id_partida>/<int:id_jogador>', views.partida, name='partida'),
     path('api_rest/list_sala/', views_rest.SalaList.as_view()),
-    path('api_auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api_auth/', include('rest_framework.urls')),
     path('atualiza_dados_jogador/', views.atualiza_estado_jogador_sala, name='dados_jogador'),
     path('atualiza_outro_jogador/', views.atualiza_outro_jogador, name='atualiza_outro_jogador')
 ]

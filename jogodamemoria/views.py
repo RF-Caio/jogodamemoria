@@ -3,9 +3,11 @@ import json
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+
 from dados_cadastrais.models import Usuario
 from jogodamemoria.forms import CriaUsuarioForm, CriaSalaForm
 from jogodamemoria.models import ControlePartida
@@ -61,8 +63,14 @@ def logout_user(request):
 
 @login_required
 def lobby(request):
-
     if request.method == 'POST':
+        if 'arquivo' in request.FILES:
+            arquivo = request.FILES['arquivo']
+            fs = FileSystemStorage()
+            filename = fs.save(f'user_images/{arquivo.name}', arquivo)
+            request.user.user_image = filename
+            request.user.save()
+
         if 'criar-sala' in request.POST:
             form = CriaSalaForm(request.POST)
             if form.is_valid():
@@ -83,6 +91,14 @@ def lobby(request):
 
     jogadores = Usuario.objects.all().order_by('ranked_win')
     salas = ControlePartida.objects.filter(estado=ControlePartida.ABERTA)
+
+    if 'busca-sala' in request.POST:
+        filtro = request.POST.get('s')
+        salas = salas.filter(nome_partida__icontains=filtro)
+
+    if 'busca-jogador' in request.POST:
+        filtro = request.POST.get('j')
+        jogadores = jogadores.filter(username__icontains=filtro)
 
     for i, jogador in enumerate(jogadores, 1):
         jogador.posicao = i
