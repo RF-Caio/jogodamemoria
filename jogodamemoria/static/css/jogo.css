@@ -10,15 +10,7 @@
     width: 100%;
     height: 100%;
 }
-/*.Principal {*/
-/*    top: 0;*/
-/*    position: relative;*/
-/*    width: 98%;*/
-/*    height: 95vh;*/
-/*    border: 3px solid rgb(255, 180, 18);*/
-/*    left: 10px;*/
-/*    background: url("/static/img/cartas/Plano_de_fundo.jpg");*/
-/*}*/
+
 .container {
     top: 2px;
     position: absolute;
