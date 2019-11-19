@@ -1,5 +1,5 @@
 {% extends 'base_site.html' %}
-{% load static %}
+{% load static custom_filter %}
     {% block title %}
         <title>Memoria - Lobby</title>
     {% endblock %}
@@ -59,16 +59,16 @@
                                 <td>{{ sala.get_tipo_partida_display }}</td>
                                 <td>{{ sala.get_level_partida_display }}</td>
                                 <td>{{ sala.get_estado_display }}</td>
-                                {% if sala.estado == 'A' %}
-                                    <td>
-                                        <form name="entrar-partida-form" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="entrar-partida">
-                                            <input type="hidden" name="id-sala-{{ sala.id }}">
-                                            <button type="submit" name="entrar-partida" id="entrar-partida">Entrar</button>
-                                        </form>
-                                    </td>
-                                {% endif %}
+{#                                {% if sala.estado == 'A' %}#}
+{#                                    <td>#}
+{#                                        <form name="entrar-partida-form" method="post">#}
+{#                                            {% csrf_token %}#}
+{#                                            <input type="hidden" name="entrar-partida">#}
+{#                                            <input type="hidden" name="id-sala-{{ sala.id }}">#}
+{#                                            <button type="submit" name="entrar-partida" id="entrar-partida">Entrar</button>#}
+{#                                        </form>#}
+{#                                    </td>#}
+{#                                {% endif %}#}
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -101,7 +101,7 @@
                         <tr>
                             <td>{{ jogador.posicao }}</td>
                             <td>{{ jogador }}</td>
-                            <td>{{ jogador.ranked_win }}</td>
+                            <td>{{ jogador.ranked_win|subtract:jogador.ranked_lose }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

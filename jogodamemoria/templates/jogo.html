@@ -1,64 +1,73 @@
-{#{% extends 'base_site.html' %}#}
+{% extends 'base_site.html' %}
 
 {% load static staticfiles %}
 {% load i18n %}
 
 {% block extrastyle %}
-    <link rel="stylesheet" href="{% static 'css/jogo.css' %}">
+{#    <link rel="stylesheet" href="{% static 'css/jogo.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/memoria.css' %}">
 {% endblock %}
 
 {% block content %}
     <center>
-        <h1 class="white">JOGO DA MEMORIA</h1>
+        <h1 class="white">JOGO DA MEMORIA - {{ partida.nome_partida }}</h1>
     </center>
-    <div class="row">
-        <div id="p1" class="col-lg-2">
+    <div class="row" style="display: flex; flex-direction: column; align-items: center">
+        <div id="p1" style="flex-direction: column; align-items: center">
             <!-- carta p1 -->
             <div class="card-grande user-box">
                 <center>
-                    <img src="{% static 'img/nopicture.png' %}" class="img-ingame">
-                    <h5 class="card-title white">Nome do usuario</h5> <!-- TODO remover hardcode -->
-                    <br/>
-                    <h3 id="p1pontuacao">00</h3>
-                    <br/>
-                    <h4 id="p1timer">15s</h4>
-                    <br/>
-                    <button id="p1ff" class="button bt-cancel" onclick="desistir(this.id)">DESISTIR</button>
+                    <div class="row">
+                        <div class="col">
+                            <img src="{% static 'img/nopicture.png' %}" class="img-ingame">
+                            <h5 class="card-title white">{{ request.user }}</h5>
+                        </div>
+                        <div class="col dados-jogador">
+                            <h3 id="tentativas">Tentativas</h3>
+                        </div>
+                        <div class="col dados-jogador">
+                            <h3 id="numacertos">Acertos</h3>
+                        </div>
+                        <div class="col dados-jogador">
+                            <h3 id="numerros">Erros</h3>
+                        </div>
+                        <div class="col dados-jogador">
+                            <form id="form-desistir" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="desistir">
+                                <button id="btn-desistir" class="button bt-cancel" onclick="desistir(this.id)">DESISTIR</button>
+                            </form>
+                        </div>
+                    </div>
                 </center>
             </div>
         </div>
-        <div id="container" class="board col-lg-8">
+        <div id="container" class="board col-lg-12" style="flex-direction: column; align-items: center">
             <!-- tabuleiro -->
 
         </div>
-        <div id="p2" class="col-lg-2">
-            <!-- carta p2 -->
-            <div class="card-grande user-box">
-                <center>
-                    <img src="{% static 'img/nopicture.png' %}" class="img-ingame">
-                    <h5 class="card-title white"></h5> <!-- TODO remover hardcode -->
-                    <br/>
-                    <h3 id="p2pontuacao">00</h3>
-                    <br/>
-                    <h4 id="p2timer">15s</h4>
-                    <br/>
-                    <button id="p2ff" class="button bt-cancel" onclick="desistir(this.id)">DESISTIR</button>
-                </center>
+    </div>
+    <div class="modal" id="modalFinalizarJogo" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exitTitle">Acabou o jogo!</h5>
+                </div>
+                <div class="modal-footer">
+                    <form name="form-finalizar-jogo" class="form-finalizar-jogo" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="finalizar-partida" class="finalizar-partida">
+                        <input type="hidden" name="post-acertos" class="post-acertos">
+                        <input type="hidden" name="post-erros" class="post-erros">
+                        <input type="hidden" name="post-tentativas" class="post-tentativas">
+                        <button type="button" class="btn bt-modal" onclick="finalizarPartida()">Finalizar Partida</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
     <div class="Principal">
-        <div class="botaomover">
-            <button id="jogar" value="Começar" class="Botao" onclick="start()">Começar</button>
-            <button id="checaJogada" value="checaJogada" class="Botao">Checa Jogada</button>
-        </div>
-        <div class="texto-tentativas">
-            <label>Tentativas: <div id="tentativas"></div></label><br>
-            <label>Acertos: <div id="numacertos"></div></label><br>
-            <label>Erros: <div id="numerros"></div></label><br>
-            <label>Sala atual: <div id="salaAtual"></div></label>
-            <label>Quem joga: <div id="quemJoga"></div></label>
-        </div>
         <div class="botaomover2" style="display:none" id="ganhouu">
             <button id="ganhou" value="Começar" class="Botao" >Parabens Voce Ganhou!!!!!!!!!!!</button>
         </div>
@@ -66,176 +75,20 @@
         </div>
     </div>
 <script>
-    var quemJoga = null;
-    var idUltimaJogada = 0;
-    var idJogadorCriador = 1;
-    var idMesa = 0;
-    var timerRodando = null;
     var posSelecionada = null;
     var jogadaFinalizada = false;
     var contador = 0;
     var mesa = [];
     var casas = 15;
-    var tentativas;
-    var numerros;
-    var ligaDesligaTimer;
+    var tentativas = 0;
+    var numerros = 0;
 
     window.onload = () => {
-        {#var btnEntrarSala = document.querySelector("#entrarSala");#}
-        {#btnEntrarSala.addEventListener("click", entrarSala);#}
-        var btnChecaJogada = document.querySelector("#checaJogada");
-        btnChecaJogada.addEventListener("click", checaJogada);
+        start();
     };
 
-    function entrarSala() {
-
-        salaParaEntrar = document.querySelector("#salaParaEntrar").value;
-
-        idMesa=salaParaEntrar;
-        document.querySelector("#salaAtual").textContent = idMesa;
-
-        mesa = [];
-
-		var xhttp = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/CartasSorteadas?idMesa=" + idMesa;
-	    xhttp.open("GET", urlToCall, false);
-	    xhttp.send();
-		if (xhttp.readyState == 4 && xhttp.status == 200) {
-			var myObj = JSON.parse(xhttp.responseText);
-            for (i in myObj) {
-                x = myObj[i];
-
-                mesa.push({
-                    nome: x.nomePersonagem,
-                    isVirada: false,
-                    isCertou: false
-                });
-            }
-		} else {
-			if (xhttp.readyState == 4) {
-	      		alert("Ocorreu um erro no servidor!!!");
-		    }
-		}
-
-		var xhttp2 = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/Jogada?idMesa=" + idMesa +
-                        "&posicao=-1&idJogador=" + idJogadorCriador + 1;
-	  	xhttp2.open("POST", urlToCall, false);
-		xhttp2.send();
-	    if (xhttp2.readyState == 4 && xhttp2.status == 200) {
-			var myObj = JSON.parse(xhttp2.responseText);
-            idUltimaJogada = myObj.idJogada;
-		} else {
-			if (xhttp2.readyState == 4) {
-		   		alert("Ocorreu um erro no servidor!!!");
-		    }
-        }
-
-		document.querySelector("#tentativas").textContent = tentativas=0;
-        document.querySelector("#tentativas").textContent = contador=0;
-        document.querySelector("#numerros").textContent = numerros=0;
-        render();
-        contador = 0;
-        quemJoga = "Adversário";
-        document.querySelector("#quemJoga").textContent = "Adversário";
-
-//        alert(idUltimaJogada);
-
-        // Habilita o timer
-        ligaDesligaTimer = setInterval(checaJogada, 1000);
-
-    }
-
-    function checaJogada() {
-
-        var myObj;
-        var xhttp = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/ChecaJogada?idMesa=" + idMesa
-                        + "&idJogada=" + idUltimaJogada;
- 	    xhttp.open("GET", urlToCall, false);
-	    xhttp.send();
-	    if (xhttp.readyState == 4 && xhttp.status == 200) {
-		    myObj = JSON.parse(xhttp.responseText);
-		} else {
-    		if (xhttp.readyState == 4) {
-	     		alert("Ocorreu um erro no servidor!!!");
-		    }
-		}
-
-        if (myObj.idJogador == 0) {
-            // Nao houve jogada depois da informada
-            return;
-        }
-
-        if (myObj.posicao == -1) {
-            // Entrou na sala um adversario para jogar
-            quemJoga = "Eu";
-            document.querySelector("#quemJoga").textContent = "Eu";
-            idUltimaJogada = myObj.idJogada;
-
-            // Desabilita o timer
-            clearInterval(ligaDesligaTimer);
-
-        }
-
-        if (myObj.posicao > -1) {
-
-            // Foi executado um movimento do adversário
-
-            var seq = myObj.posicao;
-            mesa[seq].isVirada = true;
-
-            if (posSelecionada === null) {
-
-                // Primeiro movimento da jogada, abriu a primeira carta
-
-                posSelecionada = myObj.posicao;
-
-                jogadaFinalizada = false;
-                tentativas=tentativas+1;
-
-            } else if (jogadaFinalizada === false && posSelecionada != seq) {
-
-                // Segundo movimento da jogada, abriu a segunda carta
-
-                if (mesa[seq].nome === mesa[posSelecionada].nome) {
-
-                    //Acertou a carta
-
-                    mesa[posSelecionada].isCertou = true;
-                    mesa[seq].isCertou = true;
-                    contador = contador + 1;
-
-                } else {
-
-                    //Errou a carta
-
-                    numerros= numerros+1;
-                }
-                jogadaFinalizada = true;
-            } else {
-                for (var i = 0; i < mesa.length; i++) {
-                    if (!mesa[i].isCertou) {
-                        mesa[i].isVirada = false;
-                    }
-                }
-                posSelecionada = null;
-                quemJoga = "Eu";
-                document.querySelector("#quemJoga").textContent = "Eu";
-
-                // Desabilita o timer
-                clearInterval(ligaDesligaTimer);
-
-            }
-
-            idUltimaJogada = myObj.idJogada;
-
-            render();
-        }
-    }
-
     function getPersonagem() {
-        var idx = Math.ceil(Math.random() * casas)
+        var idx = Math.ceil(Math.random() * casas);
         if (mesa.filter(it => it.nome === idx).length >= 2) {
             return getPersonagem()
         }
@@ -243,174 +96,88 @@
     }
 
     function gerarMesa() {
-
-        idMesa = 0;
-
-		var xhttp = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/Mesa?idJogador01=10&idStatus=10&idJogadorCriador=10";
-	  	xhttp.open("POST", urlToCall, false);
-		xhttp.send();
-
-		if (xhttp.readyState == 4 && xhttp.status == 200) {
-			var myObj = JSON.parse(xhttp.responseText);
-            idMesa = myObj.idMesa;
-		} else {
-			if (xhttp.readyState == 4) {
-	      		alert("Ocorreu um erro no servidor!!!");
-		    }
-		}
-
-        document.querySelector("#salaAtual").textContent = idMesa;
-
-		var xhttp2 = new XMLHttpRequest();
-		var nomeSorteado;
         mesa = [];
         for (var i = 0; i < casas * 2; i++) {
-            nomeSorteado = getPersonagem();
             mesa.push({
-                nome: nomeSorteado,
+                nome: getPersonagem(),
                 isVirada: false,
                 isCertou: false
-            });
-            var urlToCall = "http://localhost:18080/esw3JogoMemoria/CartaMesa?idMesa=" + idMesa +
-                            "&nomePersonagem=" + nomeSorteado + "&posicao=" + i;
-	  	    xhttp2.open("POST", urlToCall, false);
-		    xhttp2.send();
-			if (xhttp2.readyState == 4 && xhttp2.status == 200) {
-				var myObj = JSON.parse(xhttp2.responseText);
-                idCartaMesa = myObj.idCartaMesa;
-			} else {
-				if (xhttp2.readyState == 4) {
-		      		alert("Ocorreu um erro no servidor!!!");
-			    }
-			}
-        }
-
-		var xhttp3 = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/Jogada?idMesa=" + idMesa +
-                        "&posicao=-2&idJogador=" + idJogadorCriador;
-	  	xhttp3.open("POST", urlToCall, false);
-		xhttp3.send();
-	    if (xhttp3.readyState == 4 && xhttp3.status == 200) {
-			var myObj = JSON.parse(xhttp3.responseText);
-            idUltimaJogada = myObj.idJogada;
-		} else {
-			if (xhttp3.readyState == 4) {
-		   		alert("Ocorreu um erro no servidor!!!");
-		    }
+            })
         }
     }
 
     function start() {
-        document.querySelector("#tentativas").textContent = tentativas=0;
-        document.querySelector("#tentativas").textContent = contador=0;
-        document.querySelector("#numerros").textContent = numerros=0;
+        document.querySelector("#tentativas").textContent = 'Tentativas: ' + tentativas;
+        document.querySelector("#numacertos").textContent = 'Acertos: ' + contador;
+        document.querySelector("#numerros").textContent = 'Erros: ' + numerros;
         gerarMesa();
         render();
-
         contador = 0;
-        quemJoga = "Ninguém";
-        document.querySelector("#quemJoga").textContent = "Ninguém - sem adversário";
-
-        // Habilita o timer
-        ligaDesligaTimer = setInterval(checaJogada, 1000);
-
     }
 
     function render() {
-        document.querySelector("#tentativas").textContent = tentativas;
-        document.querySelector("#numacertos").textContent = contador;
-        document.querySelector("#numerros").textContent = numerros;
+        document.querySelector("#tentativas").textContent = 'Tentativas: ' + tentativas;
+        document.querySelector("#numacertos").textContent = 'Acertos: ' + contador;
+        document.querySelector("#numerros").textContent = 'Erros: ' + numerros;
         if(contador===15){
-            document.querySelector("#ganhouu").style.display = 'block';
+            {#document.querySelector("#ganhouu").style.display = 'block';#}
+            setInterval(() => {
+                if(!$('#myModal').hasClass('in')) {
+                    $('#modalFinalizarJogo').modal('show');
+                }
+            }, 1000)
         }
         else{
             document.querySelector("#ganhouu").style.display = 'none';
         }
-        var container = document.querySelector("#container")
+        var container = document.querySelector("#container");
 
-        container.innerHTML = ""
+        container.innerHTML = "";
 
         for (var i = 0; i < mesa.length; i++) {
-
-            container.innerHTML += `<div onClick="jogada(this)" seq=${i}  class="item"  >
-                    <img class="imagem clearfix" src="/media/Dragonball/${ mesa[i].isVirada ? mesa[i].nome : "Carta"}.jpg"/>
+            container.innerHTML += `<div onClick="jogada(this)" style="height: 127px; width: 220px;" seq=${i}  class="game-card col">
+                    <img class="imagem clearfix" src="{% static 'img/cartas' %}/${ mesa[i].isVirada ? mesa[i].nome : "WhatsApp Image 2019-11-18 at 23.28.17(1)"}.jpeg"/>
                 </div>`
         }
     }
 
     function jogada(e) {
-//        alert("entrando jogada");
-        if (quemJoga != "Eu") {
-//            alert("saindo jogada outro joga");
-            return;
-        }
         var seq = Number(e.getAttribute("seq"));
-        if (mesa[seq].isVirada == true) {
-//            alert("saindo jogada isVirada");
-            return;
-        }
-
         mesa[seq].isVirada = true;
 
-        if (posSelecionada === null) {
+            if (posSelecionada === null) {
+                posSelecionada = Number(e.getAttribute("seq"));
 
-            // Primeiro movimento da jogada, abriu a primeira carta
+                jogadaFinalizada = false;
+                tentativas=tentativas+1;
 
-            posSelecionada = Number(e.getAttribute("seq"))
+            } else if (jogadaFinalizada === false && posSelecionada != seq) {
 
-            jogadaFinalizada = false;
-            tentativas=tentativas+1;
-
-        } else if (jogadaFinalizada === false && posSelecionada != seq) {
-
-            // Segundo movimento da jogada, abriu a segunda carta
-
-            if (mesa[seq].nome === mesa[posSelecionada].nome) {
-
-                //Acertou a carta
-
-                mesa[posSelecionada].isCertou = true;
-                mesa[seq].isCertou = true;
-                contador = contador + 1;
-
-            } else {
-
-                //Errou a carta
-
-                numerros= numerros+1;
-            }
-            jogadaFinalizada = true;
-        } else {
-            for (var i = 0; i < mesa.length; i++) {
-                if (!mesa[i].isCertou) {
-                    mesa[i].isVirada = false;
+                if (mesa[seq].nome === mesa[posSelecionada].nome) {
+                    mesa[posSelecionada].isCertou = true;
+                    mesa[seq].isCertou = true;
+                    contador = contador + 1;
                 }
+                else{
+                        numerros= numerros+1;
+                       }
+                jogadaFinalizada = true
+            } else {
+                for (var i = 0; i < mesa.length; i++) {
+                    if (!mesa[i].isCertou) {
+                        mesa[i].isVirada = false
+                    }
+                }
+                posSelecionada = null
             }
-            posSelecionada = null;
-            quemJoga = "Adversário";
-            document.querySelector("#quemJoga").textContent = "Adversário";
+            render()
+    }
 
-            //Habilita o timer
-            ligaDesligaTimer = setInterval(checaJogada, 1000);
-
-        }
-
-		var xhttp = new XMLHttpRequest();
-        var urlToCall = "http://localhost:18080/esw3JogoMemoria/Jogada?idMesa=" + idMesa +
-                        "&posicao=" + seq + "&idJogador=9898";
-	  	xhttp.open("POST", urlToCall, false);
-		xhttp.send();
-	    if (xhttp.readyState == 4 && xhttp.status == 200) {
-			var myObj = JSON.parse(xhttp.responseText);
-            idUltimaJogada = myObj.idJogada;
-		} else {
-			if (xhttp.readyState == 4) {
-		   		alert("Ocorreu um erro no servidor!!!");
-		    }
-        }
-
-        render();
+    const finalizarPartida = () => {
+        $('.post-erros').val(numerros);
+        $('.post-acertos').val(contador);
+        $('.post-tentativas').val(tentativas);
+        $('.form-finalizar-jogo').submit();
     }
 </script>
 {% endblock %}

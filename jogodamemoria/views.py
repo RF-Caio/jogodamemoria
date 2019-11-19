@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
+from django.db.models import F
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -77,7 +78,7 @@ def lobby(request):
                 sala_criada = form.save(commit=False)
                 sala_criada.player1 = request.user
                 sala_criada.save()
-                return redirect('sala', id_sala=sala_criada.id, id_jogador=sala_criada.player1.id)
+                return redirect('partida', id_partida=sala_criada.id, id_jogador=sala_criada.player1.id)
             else:
                 return render(request, 'lobby.html', {'form': form})
         elif 'entrar-partida' in request.POST:
@@ -89,8 +90,8 @@ def lobby(request):
             sala.save()
             return redirect('sala', id_sala=sala.id, id_jogador=sala.player2.id)
 
-    jogadores = Usuario.objects.all().order_by('ranked_win')
-    salas = ControlePartida.objects.filter(estado=ControlePartida.ABERTA)
+    jogadores = Usuario.objects.all().annotate(pontuacao=F('ranked_win') - F('ranked_lose')).order_by('-pontuacao')
+    salas = ControlePartida.objects.filter(estado=ControlePartida.EM_ANDAMENTO)
 
     if 'busca-sala' in request.POST:
         filtro = request.POST.get('s')
@@ -138,7 +139,33 @@ def sala(request, id_sala, id_jogador):
 @login_required
 def partida(request, id_partida, id_jogador):
     partida = get_object_or_404(ControlePartida, pk=id_partida)
-    return render(request, 'jogo.html')
+
+    if partida.estado != ControlePartida.FINALIZADA:
+        if request.method == 'POST':
+            if 'desistir' in request.POST:
+                jogador = partida.player1
+                jogador.ranked_lose += 100
+                partida.estado = ControlePartida.FINALIZADA
+                partida.score_player1 = -100
+                jogador.save()
+                partida.save()
+
+            if 'finalizar-partida' in request.POST:
+                tentativas = int(request.POST.get('post-tentativas'))
+                acertos = int(request.POST.get('post-acertos'))
+                erros = int(request.POST.get('post-erros'))
+                jogador = partida.player1
+                jogador.ranked_win = acertos * 100
+                jogador.ranked_lose = erros * 5
+                partida.score_player1 = (acertos * 100 - erros * 5) / tentativas
+                partida.estado = ControlePartida.FINALIZADA
+                jogador.save()
+                partida.save()
+            return redirect('lobby')
+
+        return render(request, 'jogo.html', {'partida': partida})
+    else:
+        return redirect('lobby')
 
 
 def atualiza_estado_jogador_sala(request):

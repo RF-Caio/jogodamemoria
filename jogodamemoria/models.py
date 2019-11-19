@@ -57,7 +57,7 @@ class ControlePartida(models.Model):
     tipo_partida = models.CharField(max_length=1, choices=TIPOS_PARTIDA)
     dt_partida = models.DateTimeField(auto_now_add=True)
     level_partida = models.CharField(max_length=1, choices=DIFICULDADES)
-    estado = models.CharField(max_length=1, choices=ESTADOS, default=ABERTA)
+    estado = models.CharField(max_length=1, choices=ESTADOS, default=EM_ANDAMENTO)
     nome_partida = models.CharField(max_length=255, null=True, blank=False)
     player1_ok = models.BooleanField(default=False)
     player2_ok = models.BooleanField(default=False)
